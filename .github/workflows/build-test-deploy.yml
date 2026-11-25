@@ -1,0 +1,25 @@
+name : Build Test Deploy
+
+#déclenchement manuel
+on :
+  workflow_dispatch:
+  push:
+    branches:
+      - main #Exécute seulement si le push est fait sur main
+env :
+    DEPLOY_ENV : production
+
+jobs:
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.1.0
+      - name: Setup Java JDK
+        uses: actions/setup-java@v6.2.0
+        with:
+          java-version: 17 # optional
+          distribution: 'temurin' # optional
+      - name: Build Maven sans les tests
+        run: mvp clean package -DskipTests
