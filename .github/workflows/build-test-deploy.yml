@@ -7,7 +7,8 @@ on :
     branches:
       - main #Exécute seulement si le push est fait sur main
 env :
-    DEPLOY_ENV : production
+    DEPLOY_ENV: production
+    MAVEN_OPTS: "-Dmaven.repo.local=${{github.workspace}}/.m2/repository"
 
 jobs:
   build:
@@ -21,5 +22,10 @@ jobs:
         with:
           java-version: 17 # optional
           distribution: 'temurin' # optional
+      - name: Cache
+        uses: actions/cache@v5.1.0
+        with:
+          path: ${{github.workspace}}/.m2/repository
+          key: ${{runner.os}}--maven${{hashFiles('**/pom.xml')}}
       - name: Build Maven sans les tests
         run: mvn clean package -DskipTests
